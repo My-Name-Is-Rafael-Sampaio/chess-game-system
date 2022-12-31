@@ -15,6 +15,8 @@ public abstract class ChessPiece extends Piece {
 	public Color getColor() {
 		return color;
 	}
+	
+	protected abstract void toMove(Position position, boolean[][] tempMatrix);
 
 	protected boolean isThereOpponentPiece(Position position) {
 		ChessPiece piece = (ChessPiece) getBoard().piece(position);

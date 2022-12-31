@@ -10,7 +10,8 @@ public class Rook extends ChessPiece {
 		super(board, color);
 	}
 
-	private void opponentHere(Position position, boolean[][] tempMatrix) {
+	@Override
+	protected void toMove(Position position, boolean[][] tempMatrix) {
 		if (getBoard().positionExists(position) && isThereOpponentPiece(position)) {
 			tempMatrix[position.getRow()][position.getColumn()] = true;
 		}
@@ -28,7 +29,7 @@ public class Rook extends ChessPiece {
 			temporary[auxiliaryPosition.getRow()][auxiliaryPosition.getColumn()] = true;
 			auxiliaryPosition.setRow(auxiliaryPosition.getRow() - 1);
 		}
-		opponentHere(auxiliaryPosition, temporary);
+		toMove(auxiliaryPosition, temporary);
 
 		// left
 		auxiliaryPosition.setValues(position.getRow(), position.getColumn() - 1);
@@ -36,7 +37,7 @@ public class Rook extends ChessPiece {
 			temporary[auxiliaryPosition.getRow()][auxiliaryPosition.getColumn()] = true;
 			auxiliaryPosition.setColumn(auxiliaryPosition.getColumn() - 1);
 		}
-		opponentHere(auxiliaryPosition, temporary);
+		toMove(auxiliaryPosition, temporary);
 
 		// right
 		auxiliaryPosition.setValues(position.getRow(), position.getColumn() + 1);
@@ -44,7 +45,7 @@ public class Rook extends ChessPiece {
 			temporary[auxiliaryPosition.getRow()][auxiliaryPosition.getColumn()] = true;
 			auxiliaryPosition.setColumn(auxiliaryPosition.getColumn() + 1);
 		}
-		opponentHere(auxiliaryPosition, temporary);
+		toMove(auxiliaryPosition, temporary);
 
 		// below
 		auxiliaryPosition.setValues(position.getRow() + 1, position.getColumn());
@@ -52,7 +53,7 @@ public class Rook extends ChessPiece {
 			temporary[auxiliaryPosition.getRow()][auxiliaryPosition.getColumn()] = true;
 			auxiliaryPosition.setRow(auxiliaryPosition.getRow() + 1);
 		}
-		opponentHere(auxiliaryPosition, temporary);
+		toMove(auxiliaryPosition, temporary);
 
 		return temporary;
 	}
