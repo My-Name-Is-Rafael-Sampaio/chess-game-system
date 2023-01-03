@@ -10,52 +10,51 @@ public class Rook extends ChessPiece {
 		super(board, color);
 	}
 
-	@Override
-	protected void toMove(Position position, boolean[][] tempMatrix) {
-		if (getBoard().positionExists(position) && isThereOpponentPiece(position)) {
-			tempMatrix[position.getRow()][position.getColumn()] = true;
+	private void toMove(Position auxiliaryPosition, boolean[][] auxiliaryBoard) {
+		if (getBoard().positionExists(auxiliaryPosition) && isThereOpponentPiece(auxiliaryPosition)) {
+			auxiliaryBoard[auxiliaryPosition.getRow()][auxiliaryPosition.getColumn()] = true;
 		}
 	}
 
 	@Override
 	public boolean[][] possibleMoves() {
-		boolean[][] temporary = new boolean[getBoard().getRows()][getBoard().getColumns()];
+		boolean[][] auxiliaryBoard = new boolean[getBoard().getRows()][getBoard().getColumns()];
 
 		Position auxiliaryPosition = new Position(0, 0);
 
 		// above
 		auxiliaryPosition.setValues(position.getRow() - 1, position.getColumn());
 		while (getBoard().positionExists(auxiliaryPosition) && !getBoard().thereIsAPiece(auxiliaryPosition)) {
-			temporary[auxiliaryPosition.getRow()][auxiliaryPosition.getColumn()] = true;
+			auxiliaryBoard[auxiliaryPosition.getRow()][auxiliaryPosition.getColumn()] = true;
 			auxiliaryPosition.setRow(auxiliaryPosition.getRow() - 1);
 		}
-		toMove(auxiliaryPosition, temporary);
+		toMove(auxiliaryPosition, auxiliaryBoard);
 
 		// left
 		auxiliaryPosition.setValues(position.getRow(), position.getColumn() - 1);
 		while (getBoard().positionExists(auxiliaryPosition) && !getBoard().thereIsAPiece(auxiliaryPosition)) {
-			temporary[auxiliaryPosition.getRow()][auxiliaryPosition.getColumn()] = true;
+			auxiliaryBoard[auxiliaryPosition.getRow()][auxiliaryPosition.getColumn()] = true;
 			auxiliaryPosition.setColumn(auxiliaryPosition.getColumn() - 1);
 		}
-		toMove(auxiliaryPosition, temporary);
+		toMove(auxiliaryPosition, auxiliaryBoard);
 
 		// right
 		auxiliaryPosition.setValues(position.getRow(), position.getColumn() + 1);
 		while (getBoard().positionExists(auxiliaryPosition) && !getBoard().thereIsAPiece(auxiliaryPosition)) {
-			temporary[auxiliaryPosition.getRow()][auxiliaryPosition.getColumn()] = true;
+			auxiliaryBoard[auxiliaryPosition.getRow()][auxiliaryPosition.getColumn()] = true;
 			auxiliaryPosition.setColumn(auxiliaryPosition.getColumn() + 1);
 		}
-		toMove(auxiliaryPosition, temporary);
+		toMove(auxiliaryPosition, auxiliaryBoard);
 
 		// below
 		auxiliaryPosition.setValues(position.getRow() + 1, position.getColumn());
 		while (getBoard().positionExists(auxiliaryPosition) && !getBoard().thereIsAPiece(auxiliaryPosition)) {
-			temporary[auxiliaryPosition.getRow()][auxiliaryPosition.getColumn()] = true;
+			auxiliaryBoard[auxiliaryPosition.getRow()][auxiliaryPosition.getColumn()] = true;
 			auxiliaryPosition.setRow(auxiliaryPosition.getRow() + 1);
 		}
-		toMove(auxiliaryPosition, temporary);
+		toMove(auxiliaryPosition, auxiliaryBoard);
 
-		return temporary;
+		return auxiliaryBoard;
 	}
 
 	@Override

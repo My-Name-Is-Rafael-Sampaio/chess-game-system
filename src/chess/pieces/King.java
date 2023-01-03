@@ -10,61 +10,60 @@ public class King extends ChessPiece {
 		super(board, color);
 	}
 
-	@Override
-	public String toString() {
-		return "K";
-	}
-
 	private boolean canMove(Position position) {
 		ChessPiece piece = (ChessPiece) getBoard().piece(position);
 		return piece == null || piece.getColor() != getColor();
 	}
 
-	@Override
-	protected void toMove(Position position, boolean[][] tempMatrix) {
-		if (getBoard().positionExists(position) && canMove(position)) {
-			tempMatrix[position.getRow()][position.getColumn()] = true;
+	private void toMove(Position auxiliaryPosition, boolean[][] auxiliaryBoard) {
+		if (getBoard().positionExists(auxiliaryPosition) && canMove(auxiliaryPosition)) {
+			auxiliaryBoard[auxiliaryPosition.getRow()][auxiliaryPosition.getColumn()] = true;
 		}
 	}
 
 	@Override
 	public boolean[][] possibleMoves() {
-		boolean[][] temporary = new boolean[getBoard().getRows()][getBoard().getColumns()];
+		boolean[][] auxiliaryBoard = new boolean[getBoard().getRows()][getBoard().getColumns()];
 
 		Position auxiliaryPosition = new Position(0, 0);
 
 		// above
 		auxiliaryPosition.setValues(position.getRow() - 1, position.getColumn());
-		toMove(auxiliaryPosition, temporary);
+		toMove(auxiliaryPosition, auxiliaryBoard);
 
 		// below
 		auxiliaryPosition.setValues(position.getRow() + 1, position.getColumn());
-		toMove(auxiliaryPosition, temporary);
+		toMove(auxiliaryPosition, auxiliaryBoard);
 
 		// left
 		auxiliaryPosition.setValues(position.getRow(), position.getColumn() - 1);
-		toMove(auxiliaryPosition, temporary);
+		toMove(auxiliaryPosition, auxiliaryBoard);
 
 		// right
 		auxiliaryPosition.setValues(position.getRow(), position.getColumn() + 1);
-		toMove(auxiliaryPosition, temporary);
+		toMove(auxiliaryPosition, auxiliaryBoard);
 
 		// north-west
 		auxiliaryPosition.setValues(position.getRow() - 1, position.getColumn() - 1);
-		toMove(auxiliaryPosition, temporary);
+		toMove(auxiliaryPosition, auxiliaryBoard);
 
 		// north-east
 		auxiliaryPosition.setValues(position.getRow() - 1, position.getColumn() + 1);
-		toMove(auxiliaryPosition, temporary);
+		toMove(auxiliaryPosition, auxiliaryBoard);
 
 		// south-west
 		auxiliaryPosition.setValues(position.getRow() + 1, position.getColumn() - 1);
-		toMove(auxiliaryPosition, temporary);
+		toMove(auxiliaryPosition, auxiliaryBoard);
 
 		// south-east
 		auxiliaryPosition.setValues(position.getRow() + 1, position.getColumn() + 1);
-		toMove(auxiliaryPosition, temporary);
+		toMove(auxiliaryPosition, auxiliaryBoard);
 
-		return temporary;
+		return auxiliaryBoard;
+	}
+
+	@Override
+	public String toString() {
+		return "K";
 	}
 }
