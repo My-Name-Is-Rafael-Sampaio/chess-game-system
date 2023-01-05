@@ -48,9 +48,17 @@ public class UI {
 		System.out.print(" ");
 	}
 
+	private static String instructions() {
+		return "B = Bishop | K = King | N = Knight | P = Pawn | Q = Queen | R = Rook";
+	}
+
 	public static void printBoard(ChessPiece[][] pieces) {
 		System.out.println();
-		System.out.println("  a b c d e f g h   <-- Coluna");
+		System.out.println("Instructions:");
+		System.out.println();
+		System.out.println(instructions());
+		System.out.println();
+		System.out.println("  a b c d e f g h   <-- Column");
 		System.out.println();
 		for (int i = 0; i < pieces.length; i++) {
 			System.out.print((8 - i) + " ");
@@ -65,7 +73,11 @@ public class UI {
 
 	public static void printBoard(ChessPiece[][] pieces, boolean[][] possibleMoves) {
 		System.out.println();
-		System.out.println("  a b c d e f g h   <-- Coluna");
+		System.out.println("Instructions:");
+		System.out.println();
+		System.out.println(instructions());
+		System.out.println();
+		System.out.println("  a b c d e f g h   <-- Column");
 		System.out.println();
 		for (int i = 0; i < pieces.length; i++) {
 			System.out.print((8 - i) + " ");
