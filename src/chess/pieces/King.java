@@ -2,12 +2,21 @@ package chess.pieces;
 
 import boardGame.Board;
 import boardGame.Position;
+import chess.ChessMatch;
 import chess.ChessPiece;
 import chess.Color;
 
 public class King extends ChessPiece {
-	public King(Board board, Color color) {
+	private ChessMatch chessMatch;
+
+	public King(Board board, Color color, ChessMatch chessMatch) {
 		super(board, color);
+		this.chessMatch = chessMatch;
+	}
+
+	private boolean testRookCastling(Position position) {
+		ChessPiece piece = (ChessPiece) getBoard().piece(position);
+		return piece != null && piece instanceof Rook && piece.getColor() == getColor() && piece.getMoveCount() == 0;
 	}
 
 	private boolean canMove(Position position) {
@@ -18,6 +27,30 @@ public class King extends ChessPiece {
 	private void toMove(Position auxiliaryPosition, boolean[][] auxiliaryBoard) {
 		if (getBoard().positionExists(auxiliaryPosition) && canMove(auxiliaryPosition)) {
 			auxiliaryBoard[auxiliaryPosition.getRow()][auxiliaryPosition.getColumn()] = true;
+		}
+	}
+
+	private void specialMove(boolean[][] auxiliaryBoard) {
+		// #castling king side rook
+		Position rookPositionRight = new Position(position.getRow(), position.getColumn() + 3);
+		if (testRookCastling(rookPositionRight)) {
+			Position rightAxillaryPositionOne = new Position(position.getRow(), position.getColumn() + 1);
+			Position rightAxillaryPositionTwo = new Position(position.getRow(), position.getColumn() + 2);
+			if (getBoard().piece(rightAxillaryPositionOne) == null
+					&& getBoard().piece(rightAxillaryPositionTwo) == null) {
+				auxiliaryBoard[position.getRow()][position.getColumn() + 2] = true;
+			}
+		}
+		// castling queen side rook
+		Position rookPositionLeft = new Position(position.getRow(), position.getColumn() - 4);
+		if (testRookCastling(rookPositionLeft)) {
+			Position leftAxillaryPositionOne = new Position(position.getRow(), position.getColumn() - 1);
+			Position leftAxillaryPositionTwo = new Position(position.getRow(), position.getColumn() - 2);
+			Position leftAxillaryPositionThree = new Position(position.getRow(), position.getColumn() - 3);
+			if (getBoard().piece(leftAxillaryPositionOne) == null && getBoard().piece(leftAxillaryPositionTwo) == null
+					&& getBoard().piece(leftAxillaryPositionThree) == null) {
+				auxiliaryBoard[position.getRow()][position.getColumn() - 2] = true;
+			}
 		}
 	}
 
@@ -58,6 +91,11 @@ public class King extends ChessPiece {
 		// south-east
 		auxiliaryPosition.setValues(position.getRow() + 1, position.getColumn() + 1);
 		toMove(auxiliaryPosition, auxiliaryBoard);
+
+		// special move castling
+		if (getMoveCount() == 0 && !this.chessMatch.getCheck()) {
+			specialMove(auxiliaryBoard);
+		}
 
 		return auxiliaryBoard;
 	}

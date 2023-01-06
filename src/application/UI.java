@@ -65,10 +65,10 @@ public class UI {
 			for (int j = 0; j < pieces.length; j++) {
 				printPiece(pieces[i][j], false);
 			}
-			System.out.println("  <-- Linha");
+			System.out.println("  <-- Line");
 		}
 		System.out.println();
-		System.out.println("  a b c d e f g h   <-- Coluna");
+		System.out.println("  a b c d e f g h   <-- Column");
 	}
 
 	public static void printBoard(ChessPiece[][] pieces, boolean[][] possibleMoves) {
@@ -84,10 +84,10 @@ public class UI {
 			for (int j = 0; j < pieces.length; j++) {
 				printPiece(pieces[i][j], possibleMoves[i][j]);
 			}
-			System.out.println("  <-- Linha");
+			System.out.println("  <-- Line");
 		}
 		System.out.println();
-		System.out.println("  a b c d e f g h   <-- Coluna");
+		System.out.println("  a b c d e f g h   <-- Column");
 	}
 
 	// https://stackoverflow.com/questions/2979383/java-clear-the-console
