@@ -86,7 +86,7 @@ public class ChessMatch {
 	}
 
 	private void makeKingSpecialMove(ChessPiece piece, Position source, Position target) {
-		// castling king side rook
+		// castling to the right
 		if (piece instanceof King && target.getColumn() == source.getColumn() + 2) {
 			Position rookSource = new Position(source.getRow(), source.getColumn() + 3);
 			Position rookTarget = new Position(source.getRow(), source.getColumn() + 1);
@@ -95,7 +95,7 @@ public class ChessMatch {
 			rook.increaseMoveCount();
 		}
 
-		// castling queen side rook
+		// castling to the left
 		if (piece instanceof King && target.getColumn() == source.getColumn() - 2) {
 			Position rookSource = new Position(source.getRow(), source.getColumn() - 4);
 			Position rookTarget = new Position(source.getRow(), source.getColumn() - 1);
@@ -122,7 +122,7 @@ public class ChessMatch {
 	}
 
 	private void undoKingSpecialMove(ChessPiece piece, Position source, Position target) {
-		// castling king side rook
+		// castling to the right
 		if (piece instanceof King && target.getColumn() == source.getColumn() + 2) {
 			Position rookSource = new Position(source.getRow(), source.getColumn() + 3);
 			Position rookTarget = new Position(source.getRow(), source.getColumn() + 1);
@@ -131,7 +131,7 @@ public class ChessMatch {
 			rook.decreaseMoveCount();
 		}
 
-		// castling queen side rook
+		// castling to the left
 		if (piece instanceof King && target.getColumn() == source.getColumn() - 2) {
 			Position rookSource = new Position(source.getRow(), source.getColumn() - 4);
 			Position rookTarget = new Position(source.getRow(), source.getColumn() - 1);

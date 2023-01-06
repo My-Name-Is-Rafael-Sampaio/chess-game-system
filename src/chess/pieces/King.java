@@ -31,7 +31,7 @@ public class King extends ChessPiece {
 	}
 
 	private void specialMove(boolean[][] auxiliaryBoard) {
-		// #castling king side rook
+		// castling to the right
 		Position rookPositionRight = new Position(position.getRow(), position.getColumn() + 3);
 		if (testRookCastling(rookPositionRight)) {
 			Position rightAxillaryPositionOne = new Position(position.getRow(), position.getColumn() + 1);
@@ -41,7 +41,7 @@ public class King extends ChessPiece {
 				auxiliaryBoard[position.getRow()][position.getColumn() + 2] = true;
 			}
 		}
-		// castling queen side rook
+		// castling to the left
 		Position rookPositionLeft = new Position(position.getRow(), position.getColumn() - 4);
 		if (testRookCastling(rookPositionLeft)) {
 			Position leftAxillaryPositionOne = new Position(position.getRow(), position.getColumn() - 1);
