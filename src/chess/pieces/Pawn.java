@@ -2,13 +2,16 @@ package chess.pieces;
 
 import boardGame.Board;
 import boardGame.Position;
+import chess.ChessMatch;
 import chess.ChessPiece;
 import chess.Color;
 
 public class Pawn extends ChessPiece {
+	private ChessMatch chessMatch;
 
-	public Pawn(Board board, Color color) {
+	public Pawn(Board board, Color color, ChessMatch chessMatch) {
 		super(board, color);
+		this.chessMatch = chessMatch;
 	}
 
 	private void toMove(Position auxiliaryPosition, boolean[][] auxiliaryBoard) {
@@ -25,9 +28,35 @@ public class Pawn extends ChessPiece {
 		}
 	}
 
-	private void moveSpecial(Position auxiliaryPosition, boolean[][] auxiliaryBoard) {
+	private void specialMoveOne(Position auxiliaryPosition, boolean[][] auxiliaryBoard) {
 		if (getBoard().positionExists(auxiliaryPosition) && isThereOpponentPiece(auxiliaryPosition)) {
 			auxiliaryBoard[auxiliaryPosition.getRow()][auxiliaryPosition.getColumn()] = true;
+		}
+	}
+
+	private void specialMoveTwo(boolean[][] auxiliaryBoard) {
+		if (getColor() == Color.WHITE) {
+			Position leftPosition = new Position(position.getRow(), position.getColumn() - 1);
+			if (getBoard().positionExists(leftPosition) && isThereOpponentPiece(leftPosition)
+					&& getBoard().piece(leftPosition) == this.chessMatch.getEnPassantVulnerable()) {
+				auxiliaryBoard[leftPosition.getRow() - 1][leftPosition.getColumn()] = true;
+			}
+			Position rightPosition = new Position(position.getRow(), position.getColumn() + 1);
+			if (getBoard().positionExists(rightPosition) && isThereOpponentPiece(rightPosition)
+					&& getBoard().piece(rightPosition) == this.chessMatch.getEnPassantVulnerable()) {
+				auxiliaryBoard[rightPosition.getRow() - 1][rightPosition.getColumn()] = true;
+			}
+		} else {
+			Position leftPosition = new Position(position.getRow(), position.getColumn() - 1);
+			if (getBoard().positionExists(leftPosition) && isThereOpponentPiece(leftPosition)
+					&& getBoard().piece(leftPosition) == this.chessMatch.getEnPassantVulnerable()) {
+				auxiliaryBoard[leftPosition.getRow() + 1][leftPosition.getColumn()] = true;
+			}
+			Position rightPosition = new Position(position.getRow(), position.getColumn() + 1);
+			if (getBoard().positionExists(rightPosition) && isThereOpponentPiece(rightPosition)
+					&& getBoard().piece(rightPosition) == chessMatch.getEnPassantVulnerable()) {
+				auxiliaryBoard[rightPosition.getRow() + 1][rightPosition.getColumn()] = true;
+			}
 		}
 	}
 
@@ -47,10 +76,15 @@ public class Pawn extends ChessPiece {
 			toMove(auxiliaryPosition, auxiliaryPositionTwo, auxiliaryBoard);
 
 			auxiliaryPosition.setValues(position.getRow() - 1, position.getColumn() - 1);
-			moveSpecial(auxiliaryPosition, auxiliaryBoard);
+			specialMoveOne(auxiliaryPosition, auxiliaryBoard);
 
 			auxiliaryPosition.setValues(position.getRow() - 1, position.getColumn() + 1);
-			moveSpecial(auxiliaryPosition, auxiliaryBoard);
+			specialMoveOne(auxiliaryPosition, auxiliaryBoard);
+
+			// special move en passant
+			if (position.getRow() == 3) {
+				specialMoveTwo(auxiliaryBoard);
+			}
 		} else {
 			// black pawn
 			auxiliaryPosition.setValues(position.getRow() + 1, position.getColumn());
@@ -61,10 +95,15 @@ public class Pawn extends ChessPiece {
 			toMove(auxiliaryPosition, auxiliaryPositionTwo, auxiliaryBoard);
 
 			auxiliaryPosition.setValues(position.getRow() + 1, position.getColumn() - 1);
-			moveSpecial(auxiliaryPosition, auxiliaryBoard);
+			specialMoveOne(auxiliaryPosition, auxiliaryBoard);
 
 			auxiliaryPosition.setValues(position.getRow() + 1, position.getColumn() + 1);
-			moveSpecial(auxiliaryPosition, auxiliaryBoard);
+			specialMoveOne(auxiliaryPosition, auxiliaryBoard);
+
+			// special move en passant
+			if (position.getRow() == 4) {
+				specialMoveTwo(auxiliaryBoard);
+			}
 		}
 		return auxiliaryBoard;
 	}
