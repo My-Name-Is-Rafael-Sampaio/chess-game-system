@@ -23,6 +23,9 @@ public class ChessMatch {
 	private boolean check;
 	private boolean checkMate;
 	private ChessPiece enPassantVulnerable;
+	private Position auxiliaryPawnPositionInEnPassant;
+	private boolean capturedPosition;
+	private Piece pieceCapturedInEnPassant;
 	private ChessPiece promoted;
 
 	public ChessMatch() {
@@ -50,6 +53,14 @@ public class ChessMatch {
 
 	public ChessPiece getEnPassantVulnerable() {
 		return enPassantVulnerable;
+	}
+
+	public Piece getPieceCapturedInEnPassant() {
+		return pieceCapturedInEnPassant;
+	}
+
+	public boolean getCapturedPosition() {
+		return capturedPosition;
 	}
 
 	public ChessPiece getPromoted() {
@@ -126,17 +137,23 @@ public class ChessMatch {
 	}
 
 	// en passant movement continuation
-	/*
-	 * private void makeEnPassantMove(ChessPiece piece, Position source, Position
-	 * target, Piece capturedPiece) { if (piece instanceof Pawn) { if
-	 * (source.getColumn() != target.getColumn() && capturedPiece == null) {
-	 * Position pawnPosition; if (piece.getColor() == Color.WHITE) { pawnPosition =
-	 * new Position(target.getRow() + 1, target.getColumn()); } else { pawnPosition
-	 * = new Position(target.getRow() - 1, target.getColumn()); } capturedPiece =
-	 * this.board.removePiece(pawnPosition);
-	 * this.piecesOnTheBoard.remove((ChessPiece) capturedPiece);
-	 * this.capturedPieces.add((ChessPiece) capturedPiece); } } }
-	 */
+	private Piece makeEnPassantMove(ChessPiece piece, Position source, Position target, Piece capturedPiece) {
+		if (piece instanceof Pawn) {
+			if (source.getColumn() != target.getColumn() && capturedPiece == null) {
+				Position auxiliaryPositionPawnTwo;
+				if (piece.getColor() == Color.WHITE) {
+					auxiliaryPositionPawnTwo = new Position(target.getRow() + 1, target.getColumn());
+				} else {
+					auxiliaryPositionPawnTwo = new Position(target.getRow() - 1, target.getColumn());
+				}
+				this.auxiliaryPawnPositionInEnPassant = auxiliaryPositionPawnTwo;
+				this.capturedPosition = true;
+			}
+		}
+		return (getCapturedPosition())
+				? this.pieceCapturedInEnPassant = this.board.removePiece(this.auxiliaryPawnPositionInEnPassant)
+				: null;
+	}
 
 	private Piece makeMove(Position source, Position target) {
 		ChessPiece piece = (ChessPiece) this.board.removePiece(source);
@@ -152,18 +169,10 @@ public class ChessMatch {
 		makeKingSpecialMove(piece, source, target);
 
 		// en passant movement
-		if (piece instanceof Pawn) {
-			if (source.getColumn() != target.getColumn() && capturedPiece == null) {
-				Position pawnPosition;
-				if (piece.getColor() == Color.WHITE) {
-					pawnPosition = new Position(target.getRow() + 1, target.getColumn());
-				} else {
-					pawnPosition = new Position(target.getRow() - 1, target.getColumn());
-				}
-				capturedPiece = this.board.removePiece(pawnPosition);
-				this.piecesOnTheBoard.remove((ChessPiece) capturedPiece);
-				this.capturedPieces.add((ChessPiece) capturedPiece);
-			}
+		if (makeEnPassantMove(piece, source, target, capturedPiece) != null & this.capturedPosition) {
+			capturedPiece = this.pieceCapturedInEnPassant;
+			this.piecesOnTheBoard.remove((ChessPiece) capturedPiece);
+			this.capturedPieces.add((ChessPiece) capturedPiece);
 		}
 
 		return capturedPiece;
