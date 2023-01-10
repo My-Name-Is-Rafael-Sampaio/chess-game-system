@@ -1,5 +1,6 @@
 package chess;
 
+import java.security.InvalidParameterException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -23,6 +24,7 @@ public class ChessMatch {
 	private boolean check;
 	private boolean checkMate;
 	private ChessPiece enPassantVulnerable;
+	private ChessPiece promoted;
 
 	public ChessMatch() {
 		this.board = new Board(8, 8);
@@ -49,6 +51,10 @@ public class ChessMatch {
 
 	public ChessPiece getEnPassantVulnerable() {
 		return enPassantVulnerable;
+	}
+
+	public ChessPiece getPromoted() {
+		return promoted;
 	}
 
 	public ChessPiece[][] getPieces() {
@@ -231,6 +237,48 @@ public class ChessMatch {
 		throw new IllegalStateException("There is no " + color + " king on the board");
 	}
 
+	private ChessPiece newPiece(String pieceType, Color color) {
+		if (pieceType.equals("B")) {
+			return new Bishop(this.board, color);
+		} else if (pieceType.equals("N")) {
+			return new Knight(this.board, color);
+		} else if (pieceType.equals("Q")) {
+			return new Queen(this.board, color);
+		} else {
+			return new Rook(this.board, color);
+		}
+	}
+
+	public ChessPiece replacePromotedPiece(String pieceType) {
+		if (this.promoted == null) {
+			throw new IllegalStateException("There is no piece to be promoted");
+		}
+		if (!pieceType.equals("B") && !pieceType.equals("N") && !pieceType.equals("R") & !pieceType.equals("Q")) {
+			throw new InvalidParameterException("Invalid type for promotion");
+		}
+
+		Position auxiliaryPosition = this.promoted.getChessPosition().toPosition();
+		Piece piece = this.board.removePiece(auxiliaryPosition);
+		this.piecesOnTheBoard.remove((ChessPiece) piece);
+
+		ChessPiece newPiece = newPiece(pieceType, this.promoted.getColor());
+		this.board.placePiece(newPiece, auxiliaryPosition);
+		this.piecesOnTheBoard.add(newPiece);
+
+		return newPiece;
+	}
+
+	private void promotionSpecialMove(ChessPiece movedPiece, Position target) {
+		this.promoted = null;
+		if (movedPiece instanceof Pawn) {
+			if ((movedPiece.getColor() == Color.WHITE && target.getRow() == 0)
+					|| (movedPiece.getColor() == Color.BLACK && target.getRow() == 7)) {
+				this.promoted = (ChessPiece) this.board.piece(target);
+				this.promoted = replacePromotedPiece("Q");
+			}
+		}
+	}
+
 	private boolean testCheck(Color color) {
 		Position kingPosition = king(color).getChessPosition().toPosition();
 		List<Piece> opponentPieces = this.piecesOnTheBoard.stream()
@@ -288,6 +336,8 @@ public class ChessMatch {
 		}
 
 		ChessPiece movedPiece = (ChessPiece) this.board.piece(target);
+
+		promotionSpecialMove(movedPiece, target);
 
 		this.check = (testCheck(opponent(this.currentPlayer))) ? true : false;
 
